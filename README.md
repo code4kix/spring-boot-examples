@@ -7,13 +7,11 @@ It contains two Eclipse projects.
 `
 - spring-boot-jsp-jar show-cases how to do the same thing with jar packaging. This is not straight-forward due to certain [limitations][1] with jsps
 
-** How to get the JAR packaging to work? **  
-Full credit to [this guy][2] here for doing this for the older versions of spring boot.
+If for whatever reason, you can't deal with a war packaging, there's a bit of a hack you can try. Full credit to [this guy][2] here for doing this for the older versions of spring boot.
 
-Under the original structure, tomcat can scan to the META-INF/resources in the fat directory under the META-INF/resources directory. After adding BOOT-INF/classes, the tomcat scan is no longer available.  
+One way to do this is to personalize tomcat and add `BOOT-INF/classes` to tomcat's ResourceSet. In tomcat, all scanned resources are put into something called a ResourceSet. For example, the META-INF/resources of the application jar package in the servlet 3.0 specification is scanned and put into the ResourceSet. 
 
-So we need to personalize tomcat and add BOOT-INF/classes to tomcat's ResourceSet
-In tomcat, all scanned resources are put into something called a ResourceSet. For example, the META-INF/resources of the application jar package in the servlet 3.0 specification is scanned and put into the ResourceSet. Now you need to find a way to add the BOOT-INF/classes directory of the fat jar to the ResourceSet. We can through the tomcat LifecycleListener interface, in the Lifecycle.CONFIGURE_START_EVENT event, get the BOOT-INF/classes URL, and then add this URL to the WebResourceSet .
+Now we need to find a way to add the BOOT-INF/classes directory of the fat jar to the ResourceSet. We can do this through the tomcat LifecycleListener interface, in the `Lifecycle.CONFIGURE_START_EVENT` event, get the BOOT-INF/classes URL, and then add this URL to the WebResourceSet.
 
 [1]: https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-developing-web-applications.html#boot-features-jsp-limitations
 [2]: http://hengyunabc.github.io/spring-boot-fat-jar-jsp-sample/
